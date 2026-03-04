@@ -75,6 +75,7 @@ export const MissionsScreen = ({ lang, completed, onStartMission, onToggleLang, 
               )}
 
               <button
+                data-testid={`mission-${m.id}`}
                 onClick={() => { if (unlocked) { playSound('levelSelect'); onStartMission(m); } }}
                 className="w-full text-left rounded-2xl p-5 transition-all active:scale-98"
                 style={{

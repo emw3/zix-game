@@ -5,6 +5,7 @@ export const ResultOverlay = ({ result, t, onAction }) => {
 
   return (
     <div
+      data-testid="result-overlay"
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ background: "rgba(0,0,0,0.75)", animation: "popIn 0.3s ease-out" }}
     >
@@ -30,6 +31,7 @@ export const ResultOverlay = ({ result, t, onAction }) => {
           {isSuccess ? t.successSub : t.failSub}
         </p>
         <button
+          data-testid="result-action"
           onClick={onAction}
           className="px-10 py-3.5 rounded-2xl font-bold text-lg transition-all active:scale-95"
           style={{

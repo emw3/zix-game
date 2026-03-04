@@ -48,6 +48,7 @@ export const IntroScreen = ({ lang, onComplete }) => {
         </div>
 
         <button
+          data-testid="intro-next"
           onClick={() => {
             playSound('click');
             if (introStep < lines.length - 1) setIntroStep(introStep + 1);

@@ -1,5 +1,6 @@
 export const CodeBlock = ({ icon, label, color, id, type, onClick }) => (
   <div
+    data-testid={`block-${id}`}
     draggable
     onDragStart={(e) => {
       e.dataTransfer.setData("blockId", id);
