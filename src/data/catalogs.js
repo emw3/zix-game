@@ -1,19 +1,19 @@
 // Central registry of blocks, obstacles, ship parts, and themes
 
 export const ALL_BLOCKS = {
-  right: { id: "right", icon: "➡️", es: "Derecha", en: "Right", color: "#45B7D1" },
-  left: { id: "left", icon: "⬅️", es: "Izquierda", en: "Left", color: "#7C6FE0" },
-  up: { id: "up", icon: "⬆️", es: "Arriba", en: "Up", color: "#E07C6F" },
-  down: { id: "down", icon: "⬇️", es: "Abajo", en: "Down", color: "#4ECDC4" },
-  pick: { id: "pick", icon: "⭐", es: "Recoger", en: "Pick up", color: "#FFB347" },
-  if_water: { id: "if_water", icon: "🌊", es: "SI agua → nadar", en: "IF water → swim", color: "#4A90D9" },
-  if_rock: { id: "if_rock", icon: "🪨", es: "SI roca → saltar", en: "IF rock → jump", color: "#C4A265" },
-  if_fire: { id: "if_fire", icon: "🔥", es: "SI fuego → soplar", en: "IF fire → blow", color: "#FF4444" },
-  if_ice: { id: "if_ice", icon: "🧊", es: "SI hielo → calentar", en: "IF ice → warm", color: "#88DDFF" },
-  if_thorns: { id: "if_thorns", icon: "🌵", es: "SI espinas → cortar", en: "IF thorns → cut", color: "#66BB6A" },
-  if_lava: { id: "if_lava", icon: "🌋", es: "SI lava → enfriar", en: "IF lava → cool", color: "#FF6600" },
-  repeat2: { id: "repeat2", icon: "🔄×2", es: "Repetir ×2", en: "Repeat ×2", color: "#9B59B6" },
-  repeat3: { id: "repeat3", icon: "🔄×3", es: "Repetir ×3", en: "Repeat ×3", color: "#8E44AD" },
+  right: { id: "right", icon: "➡️", es: "Derecha", en: "Right", color: "#45B7D1", type: "direction" },
+  left: { id: "left", icon: "⬅️", es: "Izquierda", en: "Left", color: "#7C6FE0", type: "direction" },
+  up: { id: "up", icon: "⬆️", es: "Arriba", en: "Up", color: "#E07C6F", type: "direction" },
+  down: { id: "down", icon: "⬇️", es: "Abajo", en: "Down", color: "#4ECDC4", type: "direction" },
+  pick: { id: "pick", icon: "⭐", es: "Recoger", en: "Pick up", color: "#FFB347", type: "action" },
+  if_water: { id: "if_water", icon: "🌊", es: "SI agua → nadar", en: "IF water → swim", color: "#4A90D9", type: "conditional" },
+  if_rock: { id: "if_rock", icon: "🪨", es: "SI roca → saltar", en: "IF rock → jump", color: "#C4A265", type: "conditional" },
+  if_fire: { id: "if_fire", icon: "🔥", es: "SI fuego → soplar", en: "IF fire → blow", color: "#FF4444", type: "conditional" },
+  if_ice: { id: "if_ice", icon: "🧊", es: "SI hielo → calentar", en: "IF ice → warm", color: "#88DDFF", type: "conditional" },
+  if_thorns: { id: "if_thorns", icon: "🌵", es: "SI espinas → cortar", en: "IF thorns → cut", color: "#66BB6A", type: "conditional" },
+  if_lava: { id: "if_lava", icon: "🌋", es: "SI lava → enfriar", en: "IF lava → cool", color: "#FF6600", type: "conditional" },
+  repeat2: { id: "repeat2", icon: "🔄×2", es: "Repetir ×2", en: "Repeat ×2", color: "#9B59B6", type: "loop", repeatCount: 2, maxChildren: 1 },
+  repeat3: { id: "repeat3", icon: "🔄×3", es: "Repetir ×3", en: "Repeat ×3", color: "#8E44AD", type: "loop", repeatCount: 3, maxChildren: 1 },
 };
 
 export const OBSTACLE_CATALOG = [

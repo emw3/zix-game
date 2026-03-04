@@ -1,17 +1,146 @@
 import { useState, useRef } from "react";
 import { playSound } from "../audio/soundEngine";
+import { countBlocks } from "../hooks/useGameState";
 
-export const CodeDropZone = ({ blocks, onDrop, onRemove, label, lang, activeIndex = -1, maxBlocks = null, t }) => {
+export const CodeDropZone = ({
+  blocks, onDrop, onRemove, onRemoveFromLoop,
+  label, lang, activeIndex = -1, maxBlocks = null, t,
+}) => {
   const [shaking, setShaking] = useState(false);
   const shakeTimeout = useRef(null);
 
-  const isFull = maxBlocks && blocks.length >= maxBlocks;
+  const blockCount = countBlocks(blocks);
+  const isFull = maxBlocks && blockCount >= maxBlocks;
 
   const triggerShake = () => {
     playSound('blockReject');
     setShaking(true);
     if (shakeTimeout.current) clearTimeout(shakeTimeout.current);
     shakeTimeout.current = setTimeout(() => setShaking(false), 400);
+  };
+
+  // Check if active index matches a block or child
+  const isBlockActive = (blockIdx) => {
+    if (activeIndex === -1 || typeof activeIndex !== "object") return false;
+    return activeIndex.blockIndex === blockIdx && activeIndex.childIndex === -1;
+  };
+  const isLoopActive = (blockIdx) => {
+    if (activeIndex === -1 || typeof activeIndex !== "object") return false;
+    return activeIndex.blockIndex === blockIdx;
+  };
+  const isChildActive = (blockIdx, childIdx) => {
+    if (activeIndex === -1 || typeof activeIndex !== "object") return false;
+    return activeIndex.blockIndex === blockIdx && activeIndex.childIndex === childIdx;
+  };
+
+  const renderBlock = (block, i) => (
+    <div
+      key={i}
+      className="flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer group"
+      style={{
+        background: `linear-gradient(135deg, ${block.color}dd, ${block.color}aa)`,
+        animation: "slideIn 0.2s ease-out",
+        boxShadow: isBlockActive(i)
+          ? `0 0 16px ${block.color}aa, 0 2px 8px ${block.color}44`
+          : `0 2px 8px ${block.color}44`,
+        outline: isBlockActive(i) ? `2px solid ${block.color}` : "none",
+      }}
+      onClick={() => onRemove(i)}
+    >
+      <span className="text-xs font-bold w-5 text-center" style={{ color: "rgba(255,255,255,0.5)" }}>
+        {i + 1}
+      </span>
+      <span className="text-sm">{block.icon}</span>
+      <span className="text-white font-semibold text-sm flex-1" style={{ fontFamily: "'Fredoka', sans-serif" }}>
+        {lang === "es" ? block.es : block.en}
+      </span>
+      <span className="text-white opacity-0 group-hover:opacity-60 text-xs transition-opacity">✕</span>
+    </div>
+  );
+
+  const renderLoopBlock = (block, i) => {
+    const child = block.children?.[0];
+    const loopActive = isLoopActive(i);
+
+    return (
+      <div
+        key={i}
+        className="rounded-xl overflow-hidden"
+        style={{
+          borderLeft: `4px solid ${block.color}`,
+          animation: loopActive ? `loopPulse 1.2s ease-in-out infinite` : "slideIn 0.2s ease-out",
+        }}
+      >
+        {/* Loop header */}
+        <div
+          className="flex items-center gap-2 rounded-tr-lg px-3 py-2 cursor-pointer group"
+          style={{
+            background: `linear-gradient(135deg, ${block.color}dd, ${block.color}aa)`,
+            boxShadow: loopActive
+              ? `0 0 16px ${block.color}aa, 0 2px 8px ${block.color}44`
+              : `0 2px 8px ${block.color}44`,
+          }}
+          onClick={() => onRemove(i)}
+        >
+          <span className="text-xs font-bold w-5 text-center" style={{ color: "rgba(255,255,255,0.5)" }}>
+            {i + 1}
+          </span>
+          <span className="text-sm">{block.icon}</span>
+          <span className="text-white font-semibold text-sm flex-1" style={{ fontFamily: "'Fredoka', sans-serif" }}>
+            {lang === "es" ? block.es : block.en}
+          </span>
+          <span className="text-white opacity-0 group-hover:opacity-60 text-xs transition-opacity">✕</span>
+        </div>
+
+        {/* Inner slot */}
+        <div
+          className="rounded-br-lg p-2"
+          style={{
+            background: `${block.color}1e`,
+            borderRight: `1px dashed ${block.color}44`,
+            borderBottom: `1px dashed ${block.color}44`,
+          }}
+        >
+          {!child && (
+            <div
+              className="flex items-center justify-center rounded-lg py-2"
+              style={{
+                border: `1px dashed ${block.color}55`,
+                color: `${block.color}88`,
+                minHeight: 36,
+              }}
+            >
+              <span className="text-xs">
+                {lang === "es" ? "Toca una accion" : "Tap an action"}
+              </span>
+            </div>
+          )}
+          {child && (
+            <div
+              className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 cursor-pointer group"
+              style={{
+                background: `linear-gradient(135deg, ${child.color}cc, ${child.color}99)`,
+                animation: "innerSlideIn 0.2s ease-out",
+                boxShadow: isChildActive(i, 0)
+                  ? `0 0 12px ${child.color}aa, 0 1px 4px ${child.color}44`
+                  : `0 1px 4px ${child.color}44`,
+                outline: isChildActive(i, 0) ? `2px solid ${child.color}` : "none",
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemoveFromLoop(i, 0);
+              }}
+            >
+              <span className="text-xs">{child.icon}</span>
+              <span className="text-white font-semibold text-xs flex-1" style={{ fontFamily: "'Fredoka', sans-serif" }}>
+                {lang === "es" ? child.es : child.en}
+              </span>
+              <span className="text-white opacity-0 group-hover:opacity-60 text-xs transition-opacity">✕</span>
+            </div>
+          )}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -59,7 +188,7 @@ export const CodeDropZone = ({ blocks, onDrop, onRemove, label, lang, activeInde
                 background: isFull ? "rgba(255,107,138,0.15)" : "rgba(255,255,255,0.08)",
               }}
             >
-              {blocks.length} / {maxBlocks} {t.blockLimit}
+              {blockCount} / {maxBlocks} {t.blockLimit}
             </div>
           )}
         </div>
@@ -74,30 +203,9 @@ export const CodeDropZone = ({ blocks, onDrop, onRemove, label, lang, activeInde
             {t.blockLimitFull}
           </div>
         )}
-        {blocks.map((block, i) => (
-          <div
-            key={i}
-            className="flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer group"
-            style={{
-              background: `linear-gradient(135deg, ${block.color}dd, ${block.color}aa)`,
-              animation: "slideIn 0.2s ease-out",
-              boxShadow: i === activeIndex
-                ? `0 0 16px ${block.color}aa, 0 2px 8px ${block.color}44`
-                : `0 2px 8px ${block.color}44`,
-              outline: i === activeIndex ? `2px solid ${block.color}` : "none",
-            }}
-            onClick={() => onRemove(i)}
-          >
-            <span className="text-xs font-bold w-5 text-center" style={{ color: "rgba(255,255,255,0.5)" }}>
-              {i + 1}
-            </span>
-            <span className="text-sm">{block.icon}</span>
-            <span className="text-white font-semibold text-sm flex-1" style={{ fontFamily: "'Fredoka', sans-serif" }}>
-              {lang === "es" ? block.es : block.en}
-            </span>
-            <span className="text-white opacity-0 group-hover:opacity-60 text-xs transition-opacity">✕</span>
-          </div>
-        ))}
+        {blocks.map((block, i) =>
+          block.type === "loop" ? renderLoopBlock(block, i) : renderBlock(block, i)
+        )}
       </div>
       {/* Scroll fade affordance */}
       {blocks.length > 4 && (
