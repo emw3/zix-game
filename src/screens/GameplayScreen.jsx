@@ -21,7 +21,8 @@ export const GameplayScreen = ({
   const {
     mission, lang, droppedBlocks, alienPos, collectedItems,
     isMoving, isRunning, showResult, currentStepIndex,
-    addBlock, removeBlock, resetMission, completeMission,
+    addBlock, removeBlock, removeBlockFromLoop,
+    resetMission, completeMission,
     setAlienPos, setCollectedItems, setIsMoving, setIsRunning,
     setShowResult, setCurrentStepIndex,
   } = game;
@@ -51,11 +52,16 @@ export const GameplayScreen = ({
 
   const handleBlockClick = useCallback((blockId) => handleDrop(blockId), [handleDrop]);
 
+  const handleRemoveFromLoop = useCallback((loopIndex, childIndex) => {
+    if (isRunning) return;
+    playSound('blockRemove');
+    removeBlockFromLoop(loopIndex, childIndex);
+  }, [isRunning, removeBlockFromLoop]);
+
   const runCode = useCallback(() => {
     if (!mission || droppedBlocks.length === 0 || isRunning) return;
 
-    const blockIds = droppedBlocks.map((b) => b.id);
-    const { steps, success, expandedToOriginal } = executeBlocks(blockIds, mission);
+    const { steps, success, expandedToOriginal } = executeBlocks(droppedBlocks, mission);
     expandedMapRef.current = expandedToOriginal;
 
     setIsRunning(true);
@@ -92,8 +98,9 @@ export const GameplayScreen = ({
       currentStepTypeRef.current = step.type;
 
       // Map expanded step index back to original dropped block index
-      const origIdx = expandedMapRef.current?.[stepIdx] ?? Math.min(stepIdx, droppedBlocks.length - 1);
-      setCurrentStepIndex(origIdx);
+      const origMapping = expandedMapRef.current?.[stepIdx];
+      const activeIdx = origMapping ?? { blockIndex: Math.min(stepIdx, droppedBlocks.length - 1), childIndex: -1 };
+      setCurrentStepIndex(activeIdx);
 
       setAlienPos({ ...step.pos });
 
@@ -215,6 +222,7 @@ export const GameplayScreen = ({
                   icon={block.icon}
                   label={lang === "es" ? block.es : block.en}
                   color={block.color}
+                  type={block.type}
                   onClick={handleBlockClick}
                 />
               ))}
@@ -227,6 +235,7 @@ export const GameplayScreen = ({
               blocks={droppedBlocks}
               onDrop={handleDrop}
               onRemove={(i) => { if (!isRunning) { playSound('blockRemove'); removeBlock(i); } }}
+              onRemoveFromLoop={handleRemoveFromLoop}
               label={`🧩 ${t.yourCode}`}
               lang={lang}
               activeIndex={currentStepIndex}

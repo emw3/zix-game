@@ -2,6 +2,10 @@ import { useState, useCallback, useEffect } from "react";
 
 const SCREENS = { SPLASH: "splash", INTRO: "intro", MISSIONS: "missions", GAMEPLAY: "gameplay" };
 
+export function countBlocks(blocks) {
+  return blocks.reduce((sum, b) => sum + 1 + (b.children?.length || 0), 0);
+}
+
 function loadCompleted() {
   try {
     const raw = localStorage.getItem("zix-completed");
@@ -31,13 +35,43 @@ export function useGameState() {
 
   const addBlock = useCallback((block) => {
     setDroppedBlocks((prev) => {
-      if (mission?.maxBlocks && prev.length >= mission.maxBlocks) return prev;
+      if (mission?.maxBlocks && countBlocks(prev) >= mission.maxBlocks) return prev;
+
+      // Loop blocks get added with empty children
+      if (block.type === "loop") {
+        return [...prev, { ...block, children: [] }];
+      }
+
+      // Direction/action blocks auto-fill the first empty loop
+      if (block.type === "direction" || block.type === "action") {
+        const emptyLoopIdx = prev.findIndex(
+          (b) => b.type === "loop" && (!b.children || b.children.length === 0)
+        );
+        if (emptyLoopIdx !== -1) {
+          const updated = [...prev];
+          const loop = updated[emptyLoopIdx];
+          updated[emptyLoopIdx] = { ...loop, children: [block] };
+          return updated;
+        }
+      }
+
       return [...prev, block];
     });
   }, [mission]);
 
   const removeBlock = useCallback((index) => {
     setDroppedBlocks((prev) => prev.filter((_, i) => i !== index));
+  }, []);
+
+  const removeBlockFromLoop = useCallback((loopIndex, childIndex) => {
+    setDroppedBlocks((prev) => {
+      const loop = prev[loopIndex];
+      if (!loop || !loop.children) return prev;
+      const updated = [...prev];
+      const newChildren = loop.children.filter((_, i) => i !== childIndex);
+      updated[loopIndex] = { ...loop, children: newChildren };
+      return updated;
+    });
   }, []);
 
   const startMission = useCallback((m, currentLang) => {
@@ -101,6 +135,7 @@ export function useGameState() {
     // Actions
     addBlock,
     removeBlock,
+    removeBlockFromLoop,
     startMission,
     resetMission,
     completeMission,

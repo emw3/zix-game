@@ -6,33 +6,29 @@ const DELTAS = {
 };
 
 /**
- * Execute a sequence of block IDs against a mission.
- * Returns { steps, success } where steps is an array of
- * { type, pos, collected?, blockId } for animation.
+ * Execute a sequence of block objects against a mission.
+ * Loop blocks have a `children` array of inner blocks.
+ * Returns { steps, success, expandedToOriginal } where steps is an array of
+ * { type, pos, collected?, blockId } for animation, and expandedToOriginal
+ * maps each expanded step to { blockIndex, childIndex }.
  */
-export function executeBlocks(blockIds, mission) {
-  // Expand repeat blocks: the block after repeatN is executed N times
-  // Also build a mapping from expanded index → original block index
+export function executeBlocks(blocks, mission) {
+  // Expand blocks: loop blocks expand their children N times
+  // Build a mapping from expanded index → { blockIndex, childIndex }
   const expanded = [];
   const expandedToOriginal = [];
-  for (let i = 0; i < blockIds.length; i++) {
-    if (blockIds[i] === "repeat3") {
-      const next = blockIds[i + 1];
-      if (next) {
-        expanded.push(next, next, next);
-        expandedToOriginal.push(i, i, i);
-        i++;
-      }
-    } else if (blockIds[i] === "repeat2") {
-      const next = blockIds[i + 1];
-      if (next) {
-        expanded.push(next, next);
-        expandedToOriginal.push(i, i);
-        i++;
+  for (let i = 0; i < blocks.length; i++) {
+    const block = blocks[i];
+    if (block.type === "loop" && block.children?.length) {
+      for (let rep = 0; rep < block.repeatCount; rep++) {
+        for (let c = 0; c < block.children.length; c++) {
+          expanded.push(block.children[c].id);
+          expandedToOriginal.push({ blockIndex: i, childIndex: c });
+        }
       }
     } else {
-      expanded.push(blockIds[i]);
-      expandedToOriginal.push(i);
+      expanded.push(block.id);
+      expandedToOriginal.push({ blockIndex: i, childIndex: -1 });
     }
   }
 

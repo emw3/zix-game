@@ -209,6 +209,26 @@
   90% { transform: translateX(1px); }
 }
 
+@keyframes loopPulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(155, 89, 182, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(155, 89, 182, 0.5);
+  }
+}
+
+@keyframes innerSlideIn {
+  0% {
+    transform: translateY(-8px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 @keyframes rocketLaunch {
   0% {
     transform: translateY(0) scale(1);

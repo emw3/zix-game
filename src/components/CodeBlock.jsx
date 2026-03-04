@@ -1,8 +1,9 @@
-export const CodeBlock = ({ icon, label, color, id, onClick }) => (
+export const CodeBlock = ({ icon, label, color, id, type, onClick }) => (
   <div
     draggable
     onDragStart={(e) => {
       e.dataTransfer.setData("blockId", id);
+      e.dataTransfer.setData("blockType", type || "");
     }}
     onClick={() => onClick && onClick(id)}
     className="flex items-center gap-2 px-4 py-2.5 rounded-xl cursor-grab active:cursor-grabbing select-none"
