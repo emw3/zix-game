@@ -1,5 +1,6 @@
 import { useGameState } from "./hooks/useGameState";
 import { useTTS } from "./hooks/useTTS";
+import { useMute } from "./hooks/useMute";
 import { SplashScreen } from "./screens/SplashScreen";
 import { IntroScreen } from "./screens/IntroScreen";
 import { MissionsScreen } from "./screens/MissionsScreen";
@@ -8,6 +9,7 @@ import { GameplayScreen } from "./screens/GameplayScreen";
 export default function App() {
   const game = useGameState();
   const speech = useTTS();
+  const { muted, toggleMute } = useMute();
 
   const { screen, lang, completed, SCREENS } = game;
 
@@ -36,6 +38,8 @@ export default function App() {
       <MissionsScreen
         lang={lang}
         completed={completed}
+        muted={muted}
+        toggleMute={toggleMute}
         onStartMission={(m) => {
           game.startMission(m, lang);
           const typeMessages = {
@@ -59,6 +63,8 @@ export default function App() {
       <GameplayScreen
         game={game}
         speech={speech}
+        muted={muted}
+        toggleMute={toggleMute}
         onBack={() => {
           game.goToScreen(SCREENS.MISSIONS);
         }}

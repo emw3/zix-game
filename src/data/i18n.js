@@ -21,6 +21,8 @@ export const LANG = {
     missionLabel: "Misión",
     blockLimit: "bloques",
     blockLimitFull: "¡Sin espacio!",
+    mute: "Silenciar",
+    unmute: "Activar sonido",
   },
   en: {
     play: "Play!",
@@ -44,6 +46,8 @@ export const LANG = {
     missionLabel: "Mission",
     blockLimit: "blocks",
     blockLimitFull: "No space left!",
+    mute: "Mute",
+    unmute: "Unmute",
   },
 };
 
