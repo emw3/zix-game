@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Particles } from "../components/Particles";
 import { ZixCharacter } from "../components/ZixCharacter";
+import { unlockAudio, playSound } from "../audio/soundEngine";
 
 export const SplashScreen = ({ onStart }) => {
   const [ready, setReady] = useState(false);
@@ -56,7 +57,7 @@ export const SplashScreen = ({ onStart }) => {
 
         <div className="flex gap-4 mt-6">
           <button
-            onClick={() => onStart("es")}
+            onClick={() => { unlockAudio(); playSound('click'); onStart("es"); }}
             className="px-10 py-4 rounded-2xl font-bold text-lg transition-all active:scale-95"
             style={{
               background: "linear-gradient(135deg, #FFE156, #FFB347)",
@@ -69,7 +70,7 @@ export const SplashScreen = ({ onStart }) => {
             🇪🇸 ¡Jugar!
           </button>
           <button
-            onClick={() => onStart("en")}
+            onClick={() => { unlockAudio(); playSound('click'); onStart("en"); }}
             className="px-10 py-4 rounded-2xl font-bold text-lg transition-all active:scale-95"
             style={{
               background: "linear-gradient(135deg, #78B4FF, #4ECDC4)",

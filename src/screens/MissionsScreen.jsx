@@ -2,8 +2,9 @@ import { LANG } from "../data/i18n";
 import { getMission } from "../data/missions";
 import { Particles } from "../components/Particles";
 import { ZixCharacter } from "../components/ZixCharacter";
+import { playSound } from "../audio/soundEngine";
 
-export const MissionsScreen = ({ lang, completed, onStartMission, onToggleLang }) => {
+export const MissionsScreen = ({ lang, completed, onStartMission, onToggleLang, muted, toggleMute }) => {
   const t = LANG[lang];
 
   // Show completed levels + next 3 unlocked
@@ -32,13 +33,23 @@ export const MissionsScreen = ({ lang, completed, onStartMission, onToggleLang }
             </p>
           </div>
         </div>
-        <button
-          onClick={onToggleLang}
-          className="px-4 py-2 rounded-xl text-sm font-bold transition-all active:scale-95"
-          style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)", border: "1px solid rgba(255,255,255,0.1)" }}
-        >
-          {lang === "es" ? "🇪🇸 → 🇺🇸" : "🇺🇸 → 🇪🇸"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => { playSound('click'); toggleMute(); }}
+            className="px-3 py-2 rounded-xl text-sm font-bold transition-all active:scale-95"
+            style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)", border: "1px solid rgba(255,255,255,0.1)" }}
+            title={muted ? t.unmute : t.mute}
+          >
+            {muted ? "🔇" : "🔊"}
+          </button>
+          <button
+            onClick={() => { playSound('click'); onToggleLang(); }}
+            className="px-4 py-2 rounded-xl text-sm font-bold transition-all active:scale-95"
+            style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)", border: "1px solid rgba(255,255,255,0.1)" }}
+          >
+            {lang === "es" ? "🇪🇸 → 🇺🇸" : "🇺🇸 → 🇪🇸"}
+          </button>
+        </div>
       </div>
 
       {/* Mission cards */}
@@ -64,7 +75,7 @@ export const MissionsScreen = ({ lang, completed, onStartMission, onToggleLang }
               )}
 
               <button
-                onClick={() => unlocked && onStartMission(m)}
+                onClick={() => { if (unlocked) { playSound('levelSelect'); onStartMission(m); } }}
                 className="w-full text-left rounded-2xl p-5 transition-all active:scale-98"
                 style={{
                   background: done

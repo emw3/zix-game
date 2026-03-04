@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { playSound } from "../audio/soundEngine";
 
 export const CodeDropZone = ({ blocks, onDrop, onRemove, label, lang, activeIndex = -1, maxBlocks = null, t }) => {
   const [shaking, setShaking] = useState(false);
@@ -7,6 +8,7 @@ export const CodeDropZone = ({ blocks, onDrop, onRemove, label, lang, activeInde
   const isFull = maxBlocks && blocks.length >= maxBlocks;
 
   const triggerShake = () => {
+    playSound('blockReject');
     setShaking(true);
     if (shakeTimeout.current) clearTimeout(shakeTimeout.current);
     shakeTimeout.current = setTimeout(() => setShaking(false), 400);

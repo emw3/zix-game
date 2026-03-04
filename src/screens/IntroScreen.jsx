@@ -3,6 +3,7 @@ import { INTRO_LINES, LANG } from "../data/i18n";
 import { Particles } from "../components/Particles";
 import { ZixCharacter } from "../components/ZixCharacter";
 import { SpeechBubble } from "../components/SpeechBubble";
+import { playSound } from "../audio/soundEngine";
 
 export const IntroScreen = ({ lang, onComplete }) => {
   const [introStep, setIntroStep] = useState(0);
@@ -48,6 +49,7 @@ export const IntroScreen = ({ lang, onComplete }) => {
 
         <button
           onClick={() => {
+            playSound('click');
             if (introStep < lines.length - 1) setIntroStep(introStep + 1);
             else onComplete();
           }}

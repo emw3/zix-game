@@ -9,11 +9,14 @@ import { GameWorld } from "../components/GameWorld";
 import { CodeBlock } from "../components/CodeBlock";
 import { CodeDropZone } from "../components/CodeDropZone";
 import { ResultOverlay } from "../components/ResultOverlay";
+import { playSound } from "../audio/soundEngine";
 
 export const GameplayScreen = ({
   game,
   speech,
   onBack,
+  muted,
+  toggleMute,
 }) => {
   const {
     mission, lang, droppedBlocks, alienPos, collectedItems,
@@ -41,6 +44,7 @@ export const GameplayScreen = ({
     if (!mission || isRunning) return;
     const block = mission.blocks.find((b) => b.id === blockId);
     if (block) {
+      playSound('blockAdd');
       addBlock({ ...block });
     }
   }, [mission, isRunning, addBlock]);
@@ -55,9 +59,11 @@ export const GameplayScreen = ({
     expandedMapRef.current = expandedToOriginal;
 
     setIsRunning(true);
+    playSound('play');
     speak(lang === "es" ? "¡Allá voy!" : "Here I go!", lang);
 
     let stepIdx = 0;
+    let prevCollectedCount = 0;
 
     intervalRef.current = setInterval(() => {
       if (stepIdx >= steps.length) {
@@ -69,9 +75,11 @@ export const GameplayScreen = ({
         setTimeout(() => {
           setIsRunning(false);
           if (success) {
+            playSound('success');
             setShowResult("success");
             speak(lang === "es" ? "¡Lo logramos! 🎉" : "We did it! 🎉", lang);
           } else {
+            playSound('fail');
             setShowResult("fail");
             speak(lang === "es" ? "Hmm... algo falló 🐛" : "Hmm... something's wrong 🐛", lang);
           }
@@ -90,15 +98,27 @@ export const GameplayScreen = ({
       setAlienPos({ ...step.pos });
 
       if (step.collected) {
+        if (step.collected.length > prevCollectedCount) {
+          playSound('collect');
+        }
+        prevCollectedCount = step.collected.length;
         setCollectedItems([...step.collected]);
       }
 
+      if (step.type === "wall") {
+        playSound('wall');
+      } else if (step.type === "move") {
+        playSound('step');
+      }
+
       if (step.type === "crash") {
+        playSound('crash');
         clearInterval(intervalRef.current);
         setIsMoving(false);
         currentStepTypeRef.current = null;
         setTimeout(() => {
           setIsRunning(false);
+          playSound('fail');
           setShowResult("fail");
           speak(lang === "es" ? "¡Auch! 💥" : "Ouch! 💥", lang);
         }, 400);
@@ -132,7 +152,7 @@ export const GameplayScreen = ({
         {/* Top bar */}
         <div className="flex items-center justify-between mb-3">
           <button
-            onClick={onBack}
+            onClick={() => { playSound('click'); onBack(); }}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all active:scale-95"
             style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.1)" }}
           >
@@ -145,6 +165,14 @@ export const GameplayScreen = ({
             >
               {mission.icon} {t.missionLabel} {mission.id}: {lang === "es" ? mission.concept : mission.conceptEN}
             </span>
+            <button
+              onClick={() => { playSound('click'); toggleMute(); }}
+              className="px-3 py-1.5 rounded-xl text-xs font-bold"
+              style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.5)" }}
+              title={muted ? t.unmute : t.mute}
+            >
+              {muted ? "🔇" : "🔊"}
+            </button>
             <button
               onClick={game.toggleLang}
               className="px-3 py-1.5 rounded-xl text-xs font-bold"
@@ -198,7 +226,7 @@ export const GameplayScreen = ({
             <CodeDropZone
               blocks={droppedBlocks}
               onDrop={handleDrop}
-              onRemove={(i) => !isRunning && removeBlock(i)}
+              onRemove={(i) => { if (!isRunning) { playSound('blockRemove'); removeBlock(i); } }}
               label={`🧩 ${t.yourCode}`}
               lang={lang}
               activeIndex={currentStepIndex}
@@ -207,7 +235,7 @@ export const GameplayScreen = ({
             />
             <div className="flex gap-2">
               <button
-                onClick={resetMission}
+                onClick={() => { playSound('clear'); resetMission(); }}
                 disabled={isRunning}
                 className="flex-1 py-3 rounded-xl font-bold text-sm transition-all active:scale-95"
                 style={{
