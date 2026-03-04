@@ -25,3 +25,13 @@ CLAUDE.md
 .cursorignore
 .copilot/
 .github/copilot-*
+.superset/
+.windsurf/
+.codeium/
+.aider*
+.continue/
+.bolt/
+.v0/
+.tabnine/
+.cody/
+.devai/
