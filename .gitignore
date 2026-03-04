@@ -35,3 +35,7 @@ CLAUDE.md
 .tabnine/
 .cody/
 .devai/
+
+# Playwright
+test-results/
+playwright-report/
