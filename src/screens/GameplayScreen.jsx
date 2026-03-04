@@ -159,6 +159,7 @@ export const GameplayScreen = ({
         {/* Top bar */}
         <div className="flex items-center justify-between mb-3">
           <button
+            data-testid="back-button"
             onClick={() => { playSound('click'); onBack(); }}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all active:scale-95"
             style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.1)" }}
@@ -173,6 +174,7 @@ export const GameplayScreen = ({
               {mission.icon} {t.missionLabel} {mission.id}: {lang === "es" ? mission.concept : mission.conceptEN}
             </span>
             <button
+              data-testid="mute-toggle"
               onClick={() => { playSound('click'); toggleMute(); }}
               className="px-3 py-1.5 rounded-xl text-xs font-bold"
               style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.5)" }}
@@ -181,6 +183,7 @@ export const GameplayScreen = ({
               {muted ? "🔇" : "🔊"}
             </button>
             <button
+              data-testid="lang-toggle"
               onClick={game.toggleLang}
               className="px-3 py-1.5 rounded-xl text-xs font-bold"
               style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.5)" }}
@@ -244,6 +247,7 @@ export const GameplayScreen = ({
             />
             <div className="flex gap-2">
               <button
+                data-testid="clear-code"
                 onClick={() => { playSound('clear'); resetMission(); }}
                 disabled={isRunning}
                 className="flex-1 py-3 rounded-xl font-bold text-sm transition-all active:scale-95"
@@ -257,6 +261,7 @@ export const GameplayScreen = ({
                 🗑️ {t.clear}
               </button>
               <button
+                data-testid="run-code"
                 onClick={runCode}
                 disabled={droppedBlocks.length === 0 || isRunning}
                 className="flex-1 py-3 rounded-xl font-bold text-sm transition-all active:scale-95"

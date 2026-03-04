@@ -146,6 +146,7 @@ export const CodeDropZone = ({
   return (
     <div className="relative flex-1 min-h-0 flex flex-col">
       <div
+        data-testid="drop-zone"
         onDragOver={(e) => {
           e.preventDefault();
           if (isFull) {

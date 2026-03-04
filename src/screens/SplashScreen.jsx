@@ -57,6 +57,7 @@ export const SplashScreen = ({ onStart }) => {
 
         <div className="flex gap-4 mt-6">
           <button
+            data-testid="lang-es"
             onClick={() => { unlockAudio(); playSound('click'); onStart("es"); }}
             className="px-10 py-4 rounded-2xl font-bold text-lg transition-all active:scale-95"
             style={{
@@ -70,6 +71,7 @@ export const SplashScreen = ({ onStart }) => {
             🇪🇸 ¡Jugar!
           </button>
           <button
+            data-testid="lang-en"
             onClick={() => { unlockAudio(); playSound('click'); onStart("en"); }}
             className="px-10 py-4 rounded-2xl font-bold text-lg transition-all active:scale-95"
             style={{
