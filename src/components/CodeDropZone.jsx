@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { playSound } from "../engine/soundEngine";
+import { playSound } from "../audio/soundEngine";
 
 export const CodeDropZone = ({ blocks, onDrop, onRemove, label, lang, activeIndex = -1, maxBlocks = null, t }) => {
   const [shaking, setShaking] = useState(false);

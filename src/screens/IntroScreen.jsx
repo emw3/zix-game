@@ -3,7 +3,7 @@ import { INTRO_LINES, LANG } from "../data/i18n";
 import { Particles } from "../components/Particles";
 import { ZixCharacter } from "../components/ZixCharacter";
 import { SpeechBubble } from "../components/SpeechBubble";
-import { playSound } from "../engine/soundEngine";
+import { playSound } from "../audio/soundEngine";
 
 export const IntroScreen = ({ lang, onComplete }) => {
   const [introStep, setIntroStep] = useState(0);

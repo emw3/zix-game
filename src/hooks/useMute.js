@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { setMuted, isMuted } from "../engine/soundEngine";
+import { setMuted, isMuted } from "../audio/soundEngine";
 
 export function useMute() {
   const [muted, setMutedState] = useState(isMuted());

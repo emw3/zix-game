@@ -9,7 +9,7 @@ import { GameWorld } from "../components/GameWorld";
 import { CodeBlock } from "../components/CodeBlock";
 import { CodeDropZone } from "../components/CodeDropZone";
 import { ResultOverlay } from "../components/ResultOverlay";
-import { playSound } from "../engine/soundEngine";
+import { playSound } from "../audio/soundEngine";
 
 export const GameplayScreen = ({
   game,

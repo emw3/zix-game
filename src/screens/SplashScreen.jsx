@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Particles } from "../components/Particles";
 import { ZixCharacter } from "../components/ZixCharacter";
-import { unlockAudio, playSound } from "../engine/soundEngine";
+import { unlockAudio, playSound } from "../audio/soundEngine";
 
 export const SplashScreen = ({ onStart }) => {
   const [ready, setReady] = useState(false);

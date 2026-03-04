@@ -2,7 +2,7 @@ import { LANG } from "../data/i18n";
 import { getMission } from "../data/missions";
 import { Particles } from "../components/Particles";
 import { ZixCharacter } from "../components/ZixCharacter";
-import { playSound } from "../engine/soundEngine";
+import { playSound } from "../audio/soundEngine";
 
 export const MissionsScreen = ({ lang, completed, onStartMission, onToggleLang, muted, toggleMute }) => {
   const t = LANG[lang];
